@@ -26,5 +26,6 @@
     "dist/index.js",
     "dist/chaiTerminatedRule.js",
     "dist/noExpectInCatchRule.js"
-  ]
+  ],
+  "keywords":["tslint","expect","chai"]
 }
