@@ -1,0 +1,49 @@
+try {
+  expect('this');
+} catch(e) {
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectCatchHandler]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectCatchHandler]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectCatchHandler]
+  expect(1,2,3);
+  thing.expect('not the expect you are looking for');
+}
+const promise = Promise.resolve();
+promise.catch(() => {
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectPromiseCatch]
+  expect(1,2,3);
+  thing.expect('not the expect you are looking for');
+});
+promise.catch(function(){
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectPromiseCatch]
+  expect(1,2,3);
+  thing.expect('not the expect you are looking for');
+  await expect(Promise.resolve(new Error())).to.be.rejected;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [expectPromiseCatch]
+  return expect('this');
+         ~~~~~~~~~~~~~~ [expectPromiseCatch]
+})
+promise.then(() => {
+  expect('this');
+})
+[error]: expect call in %s
+[expectPromiseCatch]: error % ("promise catch")
+[expectCatchHandler]: error % ("catch handler")

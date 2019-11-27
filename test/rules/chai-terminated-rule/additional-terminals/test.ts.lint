@@ -1,0 +1,95 @@
+function notExpect(){
+  expect.x;
+  expect();
+  expect(1,2,3);
+}
+async function terminatedExpectProperties(){
+  expect(true).to.be.ok;
+  expect(true).to.be.true;
+  expect(false).to.be.false;
+  expect(null).to.be.null;
+  expect(undefined).to.be.undefined;
+  expect([]).to.be.empty;
+  expect(1).to.be.finite;
+  expect(NaN).to.be.NaN;
+  expect(undefined).not.to.exist;
+  expect(arguments).to.be.arguments;
+  expect(arguments).to.be.Arguments;
+  expect({a: 1}).to.be.extensible;
+  expect(1).to.be.sealed;
+  expect(1).to.be.frozen;
+
+  somePromise.then(() => expect([]).to.be.empty);
+
+  //additional terminals
+  expect(Promise.resolve()).to.be.fulfilled;
+  expect(Promise.reject()).to.be.rejected;
+
+  somePromise.then(() => expect(1).to.be.frozen);
+
+  await expect(Promise.reject(new Error())).to.be.rejected;
+
+  return expect(Promise.reject(new Error())).to.be.rejected;
+}
+async function terminatedMethods(){
+  expect('this').to.be.eql('this');
+  somePromise.then(() => expect('this').to.be.eql('this'));
+  await expect(Promise.reject(new SomeError())).to.be.rejectedWith(SomeError);
+  return expect(Promise.reject(new SomeError())).to.be.rejectedWith(SomeError);
+}
+async function unterminatedExpect(){
+  expect('');
+  ~~~~~~~~~~ [Unterminated expectation]
+  expect('','');
+  ~~~~~~~~~~~~~ [Unterminated expectation]
+
+  //not chai expect
+  expect.x;
+  expect(1,2,3);
+
+  await expect('this').to.be;
+        ~~~~~~~~~~~~~~ [Unterminated expectation]
+  somePromise.then(() => expect('this').to.be);
+                         ~~~~~~~~~~~~~~ [Unterminated expectation]
+  return expect(Promise.reject(new Error())).to.be;
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [Unterminated expectation]
+}
+function unterminatedProperties(){
+  expect(true).to;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).be;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).been;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).is;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).that;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).which;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).and;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).has;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).have;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).with;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).at;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).of;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).same;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).but;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).does;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+  expect(true).still;
+  ~~~~~~~~~~~~ [Unterminated expectation]
+
+  //terminated then chained - did not call method eql
+  expect(myObj).to.be.a('myCustomType').but.not.eql
+  ~~~~~~~~~~~~~ [Unterminated expectation]
+
+}

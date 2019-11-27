@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "chai-terminated": {
+      "options": {"additionalTerminals": ["rejected", "fulfilled"]}
+    }
+  },
+  "rulesDirectory": ["C:\\Users\\tonyh\\Documents\\vscode\\expect-tslint\\dist"]
+}

@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "no-expect-in-catch": true
+  },
+  "rulesDirectory": ["C:\\Users\\tonyh\\Documents\\vscode\\expect-tslint\\dist"]
+}

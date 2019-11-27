@@ -1,0 +1,30 @@
+{
+  "name": "expect-tslint",
+  "version": "1.0.0",
+  "description": "Tslint rules for expect function calls",
+  "scripts": {
+    "test": "tslint --test test/**/*",
+    "test-specific": "tslint --test .\\test\\rules\\chai-terminated-rule\\additional-terminals\\tslint.json"
+  },
+  "main": "dist/index.js",
+  "author": "Tony Hallett",
+  "homepage": "https://github.com/tonyhallett/expect-tslint#readme",
+  "bugs":{
+    "url": "https://github.com/tonyhallett/expect-tslint/issues"
+  },
+  "repository": "github:tonyhallett/expect-tslint",
+  "license": "ISC",
+  "devDependencies": {
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "tslint": "^5.20.1"
+  },
+  "files": [
+    "dist/index.js",
+    "dist/chaiTerminatedRule.js",
+    "dist/noExpectInCatchRule.js"
+  ]
+}

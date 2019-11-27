@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "no-expect-in-catch": {
+      "options": {"aliases": ["expect", "should"]}
+    }
+  },
+  "rulesDirectory": ["C:\\Users\\tonyh\\Documents\\vscode\\expect-tslint\\dist"]
+}

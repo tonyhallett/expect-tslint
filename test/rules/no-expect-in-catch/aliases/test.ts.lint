@@ -1,0 +1,76 @@
+try {
+  expect('this');
+} catch(e) {
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectCatchHandler]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectCatchHandler]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectCatchHandler]
+  expect(1,2,3);
+
+  should('this');
+  ~~~~~~~~~~~~~~ [shouldCatchHandler]
+  should('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [shouldCatchHandler]
+  should.x;
+  should();
+  should(1,2);
+  ~~~~~~~~~~~ [shouldCatchHandler]
+  should(1,2,3);
+}
+const promise = Promise.resolve();
+promise.catch(() => {
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectPromiseCatch]
+  expect(1,2,3);
+
+  should('this');
+  ~~~~~~~~~~~~~~ [shouldPromiseCatch]
+  should('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [shouldPromiseCatch]
+  should.x;
+  should();
+  should(1,2);
+  ~~~~~~~~~~~ [shouldPromiseCatch]
+  expect(1,2,3);
+});
+promise.catch(function(){
+  expect('this');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [expectPromiseCatch]
+  expect.x;
+  expect();
+  expect(1,2);
+  ~~~~~~~~~~~ [expectPromiseCatch]
+  expect(1,2,3);
+
+  should('this');
+  ~~~~~~~~~~~~~~ [shouldPromiseCatch]
+  should('this').to.be.eql('that');
+  ~~~~~~~~~~~~~~ [shouldPromiseCatch]
+  should.x;
+  should();
+  should(1,2);
+  ~~~~~~~~~~~ [shouldPromiseCatch]
+  expect(1,2,3);
+})
+promise.then(() => {
+  expect('this');
+  should('this');
+})
+
+[error]: %s call in %s
+[shouldPromiseCatch]: error % ("should", "promise catch")
+[expectPromiseCatch]: error % ("expect", "promise catch")
+[shouldCatchHandler]: error % ("should", "catch handler")
+[expectCatchHandler]: error % ("expect", "catch handler")

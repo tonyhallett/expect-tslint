@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "chai-terminated": true
+  },
+  "rulesDirectory": ["C:\\Users\\tonyh\\Documents\\vscode\\expect-tslint\\dist"]
+}
