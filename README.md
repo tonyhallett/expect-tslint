@@ -56,7 +56,7 @@ With this rule, an expect call is the same as for no-expect-in-catch with method
 
 ## Controlling the walk
 
-Both rules are set up to not forEachChild for specific SyntaxKind.  These can be found at [ignoreKinds.ts](../blob/master/src/kinds/ignoreKinds.ts).
+Both rules are set up to not forEachChild for specific SyntaxKind.  These can be found at [ignoreKinds.ts](../master/src/kinds/ignoreKinds.ts).
 
 Through options it is possible exclude further SyntaxKind or include ones that I have excluded.
 
