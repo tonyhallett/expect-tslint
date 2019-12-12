@@ -1,24 +1,20 @@
-import * as Lint from 'tslint'
+
 import * as ts from 'typescript';
-import { WalkContext } from 'tslint';
-export class Rule extends Lint.Rules.AbstractRule{
+import { ignoreKinds } from './kinds/ignoreKinds';
+import { functionLikeKinds } from './kinds/functionLikeKinds';
+import { SyntaxKindRule } from './baseRules/syntaxKindRule/SyntaxKindRule';
+import { IncludeExcludeKinds } from './baseRules/IgnoreNodeByKindRule';
+
+export class Rule extends SyntaxKindRule{
   private expectDisallowed:boolean = false;
   private expectInPromise = false;
-  
-  private lintContext!:WalkContext;
   private aliases!: string[];
-
-  private iterateNodes = (node:ts.Node) => {
-    if(ts.isTryStatement(node)){
-      this.checkCatch(node.catchClause)
-    }
-    if(ts.isCallExpression(node)){
-      this.checkCallExpression(node);
-    }
-    else{
-      ts.forEachChild(node, this.iterateNodes);
-    }
+  
+  
+  private iterateFunctionLike = (node: ts.FunctionLikeDeclaration) => {
+    return node.body?this.iterate(node.body): false;
   }
+  
   private callExpressionIsCatch = (callExpression:ts.CallExpression) => {
     let argument: ts.ArrowFunction | ts.FunctionExpression | undefined;
     const propertyAccessExpression = callExpression.expression;
@@ -62,19 +58,19 @@ export class Rule extends Lint.Rules.AbstractRule{
         
         this.expectInPromise = true;
         this.expectDisallowed = true;
-        ts.forEachChild(argument, this.iterateNodes);
+        this.iterate(argument);
         this.expectDisallowed = false;
         this.expectInPromise = false;
       }
     }
     if(iterateFurther){
-      ts.forEachChild(callExpression, this.iterateNodes);
+      this.iterate(callExpression);
     }
   }
-  private checkCatch = (catchClause: ts.CatchClause | undefined) => {
-    if(catchClause){
+  private checkCatch = (node: ts.TryStatement) => {
+    if(node.catchClause){
       this.expectDisallowed = true;
-      ts.forEachChild(catchClause.block, this.iterateNodes);
+      this.iterate(node.catchClause.block);
       this.expectDisallowed = false;
     }
   }
@@ -90,12 +86,25 @@ export class Rule extends Lint.Rules.AbstractRule{
       this.aliases=['expect'];
     }
   }
-  apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-    this.setAliases();
-    return this.applyWithFunction(sourceFile,(ctx => {
-      this.lintContext = ctx;
-      ts.forEachChild(sourceFile, this.iterateNodes);
-    }));
+  private setSyntaxKindHandlers(){
+    this.syntaxKindFunctions.set(ts.SyntaxKind.TryStatement, this.checkCatch);
+    this.syntaxKindFunctions.set(ts.SyntaxKind.CallExpression, this.checkCallExpression);
+    functionLikeKinds.forEach(k => this.syntaxKindFunctions.set(k as any, this.iterateFunctionLike))
   }
-  
+  private setIgnoreKinds(){
+    this.ignoreKinds = ignoreKinds;
+  }
+  protected initialise(){
+    this.setAliases();
+    this.setSyntaxKindHandlers();
+    this.setIgnoreKinds();
+  }
+  protected getIncludeExcludeKindsFromOptions(){
+    let includeExcludeKinds: IncludeExcludeKinds | undefined;
+    const options = this.getOptions();
+    if(options.ruleArguments.length===1){
+      includeExcludeKinds = options.ruleArguments[0].includeExcludeKinds;
+    }
+    return includeExcludeKinds? includeExcludeKinds: {};
+  }
 }

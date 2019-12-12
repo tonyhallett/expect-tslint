@@ -1,21 +1,20 @@
-import * as Lint from 'tslint'
 import * as ts from 'typescript';
-import { WalkContext } from 'tslint';
-export class Rule extends Lint.Rules.AbstractRule{
-  private lintContext!:WalkContext;
+import { SyntaxKindRule } from './baseRules/syntaxKindRule/SyntaxKindRule';
+import { functionLikeKinds } from './kinds/functionLikeKinds';
+import { ignoreKinds } from './kinds/ignoreKinds';
+import { IncludeExcludeKinds } from './baseRules/IgnoreNodeByKindRule';
+
+export class Rule extends SyntaxKindRule{
   private readonly expectOrShould = ['expect', 'should']
 
   private terminalProperties = ['ok', 'true', 'false', 'null', 'undefined', 'NaN', 'exist', 'empty', 'Arguments','arguments', 'extensible', 'sealed', 'frozen', 'finite']
 
   private readonly unterminatedExpectationMessage = 'Unterminated expectation';
-  private iterateNodes = (node:ts.Node) => {
-    if(ts.isCallExpression(node)){
-      this.checkCallExpression(node);
-    }
-    else{
-      ts.forEachChild(node, this.iterateNodes);
-    }
+
+  private iterateFunctionLike = (node: ts.FunctionLikeDeclaration) => {
+    return node.body?this.iterate(node.body): false;
   }
+  
   private isCallExpressionExpect=(callExpression: ts.CallExpression)=>{
     let isExpect = false;
     const expect = callExpression.expression;
@@ -74,7 +73,7 @@ export class Rule extends Lint.Rules.AbstractRule{
     }
     
     if(iterateFurther){
-      ts.forEachChild(callExpression, this.iterateNodes);
+      this.iterate(callExpression);
     }
   }
   private addAdditionalTerminals = () => {
@@ -87,12 +86,24 @@ export class Rule extends Lint.Rules.AbstractRule{
     }
   }
   
-  apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-    this.addAdditionalTerminals();
-    return this.applyWithFunction(sourceFile,(ctx => {
-      this.lintContext = ctx;
-      ts.forEachChild(sourceFile, this.iterateNodes);
-    }));
+  private setSyntaxKindHandlers(){
+    this.syntaxKindFunctions.set(ts.SyntaxKind.CallExpression, this.checkCallExpression);
+    functionLikeKinds.forEach(k => this.syntaxKindFunctions.set(k as any, this.iterateFunctionLike))
   }
-  
+  private setIgnoreKinds(){
+    this.ignoreKinds = ignoreKinds;
+  }
+  protected initialise(){
+    this.addAdditionalTerminals();
+    this.setSyntaxKindHandlers();
+    this.setIgnoreKinds();
+  }
+  protected getIncludeExcludeKindsFromOptions(){
+    let includeExcludeKinds: IncludeExcludeKinds | undefined;
+    const options = this.getOptions();
+    if(options.ruleArguments.length===1){
+      includeExcludeKinds = options.ruleArguments[0].includeExcludeKinds;
+    }
+    return includeExcludeKinds? includeExcludeKinds: {};
+  }
 }

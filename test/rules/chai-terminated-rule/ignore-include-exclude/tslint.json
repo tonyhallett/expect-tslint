@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "chai-terminated": {
+      "options": {
+        "additionalTerminals": ["rejected", "fulfilled"], 
+        "includeExcludeKinds": {
+          "exclude": ["VariableStatement"],
+          "include": ["InterfaceDeclaration"]
+        }
+      }
+    }
+  },
+  "rulesDirectory": ["C:\\Users\\tonyh\\Documents\\vscode\\expect-tslint\\dist"]
+}

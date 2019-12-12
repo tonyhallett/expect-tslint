@@ -1,6 +1,6 @@
 {
   "name": "expect-tslint",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Tslint rules for expect function calls",
   "scripts": {
     "test": "tslint --test test/**/*",
